@@ -44,7 +44,6 @@ namespace misacpy
         if (dis >= size_t(32))
         {
             size_t i = 0;
-
             for (; i + size_t(31) < n; i += size_t(32))
             {
                 __m256i reg = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(src + i));
