@@ -10,26 +10,34 @@ add_executable(misacpy_bench
     ../src/cyccpy.cpp
 )
 
-target_include_directories(misacpy_bench PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/../include
+add_executable(probe
+    probe.cpp
+    bench_functions.cpp
+    ../src/cyccpy.cpp
 )
 
-target_compile_features(misacpy_bench PRIVATE cxx_std_17)
-
-if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(misacpy_bench PRIVATE
-        -O3
-        -g
-        -fno-omit-frame-pointer
-        -Wall
-        -Wextra
-        -Wpedantic
+foreach(target misacpy_bench probe)
+    target_include_directories(${target} PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include
     )
 
-    if(MISACPY_BENCH_MARCH_NATIVE)
-        target_compile_options(misacpy_bench PRIVATE -march=native)
-    else()
-        target_compile_options(misacpy_bench PRIVATE -mavx)
+    target_compile_features(${target} PRIVATE cxx_std_17)
+
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(${target} PRIVATE
+            -O3
+            -g
+            -fno-omit-frame-pointer
+            -Wall
+            -Wextra
+            -Wpedantic
+        )
+
+        if(MISACPY_BENCH_MARCH_NATIVE)
+            target_compile_options(${target} PRIVATE -march=native)
+        else()
+            target_compile_options(${target} PRIVATE -mavx)
+        endif()
     endif()
-endif()
+endforeach()

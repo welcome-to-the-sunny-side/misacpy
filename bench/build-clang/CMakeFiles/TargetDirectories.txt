@@ -1,0 +1,3 @@
+/home/non/Play/misacpy/bench/build-clang/CMakeFiles/misacpy_bench.dir
+/home/non/Play/misacpy/bench/build-clang/CMakeFiles/edit_cache.dir
+/home/non/Play/misacpy/bench/build-clang/CMakeFiles/rebuild_cache.dir

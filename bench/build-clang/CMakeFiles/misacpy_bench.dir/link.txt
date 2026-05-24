@@ -1,0 +1,1 @@
+/usr/bin/clang++ -O3 -DNDEBUG -Xlinker --dependency-file=CMakeFiles/misacpy_bench.dir/link.d CMakeFiles/misacpy_bench.dir/bench.cpp.o CMakeFiles/misacpy_bench.dir/bench_functions.cpp.o CMakeFiles/misacpy_bench.dir/home/non/Play/misacpy/src/cyccpy.cpp.o -o misacpy_bench
