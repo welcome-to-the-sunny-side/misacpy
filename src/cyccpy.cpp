@@ -7,6 +7,7 @@
 
 namespace misacpy
 {
+    // Helpers
     uint32_t loadu4(const uint8_t* ptr)
     {
         uint32_t v;
@@ -29,8 +30,7 @@ namespace misacpy
     }
 
     static const size_t TINY = 128;
-
-    static const size_t BENCH_RB = 512 << 2;
+    static const size_t BENCH_RB = 512;
 
     // Performs `for(int i = 0; i < n; i ++) src[i + dis] = src[i]` but fast (^_^)
     // Requires positive `dis`
@@ -71,7 +71,7 @@ namespace misacpy
             size_t i = 0;
             size_t prefix = dis;
 
-            // build the prefix
+            // Build the prefix
             for (; i + size_t(31) < n and prefix < prefix_required;
                  i += size_t(32), prefix += size_t(32))
             {
@@ -95,10 +95,8 @@ namespace misacpy
 
             // We now have every required prefix_required byte window in [src, src +
             // prefix_required)
-
             size_t offset = (prefix % dis);
             size_t add_32 = (size_t(32) % dis);
-
             while (i + size_t(31) < n)
             {
                 __m256i reg = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(src + offset));
@@ -138,7 +136,6 @@ namespace misacpy
 
             // We now have every required prefix_required byte window in [src, src +
             // prefix_required)
-
             size_t offset = (prefix % dis);
             size_t add_32 = (size_t(32) % dis);
 
