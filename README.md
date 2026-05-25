@@ -10,6 +10,11 @@ void f(uint8_t* src, size_t dis, size_t n)
 
 My implementation (`misacpy::cyccpy`) outperforms the naive assembly by GCC and Clang (`-O3 -march=native`) at all `dis <= 200`, with diminishing returns for increasing `dis`.
 
+Most of the performance gains are due to the following reasons:
+
+- At `dis < 32`, both GCC and Clang are not able to vectorize the loop with 256 bit avx registers.
+- At smaller distances, naive vectorization struggles because of Store-To-Load Forwarding stalls (prefixes/suffixes of the 32 byte window starting at `src + (i + dis)` are read soon after `sr[i + dis, i + dis + 32)` is written for smaller `dis`, and the latter may not have been flushed from the store-buffer to L1 by then). My implementation almost completely eliminates these from the hot loop.
+
 Some results on my i7-14650HX CPU (benchmark script is at scripts/quiet-run.sh):
 
 ```
