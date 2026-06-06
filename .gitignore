@@ -1,7 +1,10 @@
 .codex
 .claude
+CLAUDE.md
 .cache
 .vscode
 build
 commands.md
 tmp
+*.out
+*.exe

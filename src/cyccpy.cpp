@@ -153,4 +153,5 @@ namespace misacpy
                 src[i + dis] = src[i];
         }
     }
+
 } // namespace misacpy
