@@ -33,7 +33,7 @@ struct random : std::mt19937
 
 void cpy(uint8_t *src, size_t dis, size_t n)
 {
-    for(int i = 0; i < n; i ++)
+    for(size_t i = 0; i < n; i ++)
         src[i + dis] = src[i];
 }
 
@@ -76,7 +76,7 @@ signed main()
         uint64_t mn1 = UINT64_MAX;
         for(int i = 0; i < T; i ++)
         {
-            for(int i = 0; i < dis; i ++)
+            for(size_t i = 0; i < dis; i ++)
                 arr[i] = uint8_t(rng());
             auto l = std::chrono::steady_clock::now();
             do_once(arr, dis, n, fn1);
@@ -88,7 +88,7 @@ signed main()
         uint64_t mn2 = UINT64_MAX;
         for(int i = 0; i < T; i ++)
         {
-            for(int i = 0; i < dis; i ++)
+            for(size_t i = 0; i < dis; i ++)
                 arr[i] = uint8_t(rng());
             auto l = std::chrono::steady_clock::now();
             do_once(arr, dis, n, fn2);

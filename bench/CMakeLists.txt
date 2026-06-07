@@ -16,7 +16,19 @@ add_executable(probe
     ../src/cyccpy.cpp
 )
 
-foreach(target misacpy_bench probe)
+add_executable(simple_bench
+    simplebench.cpp
+    bench_functions.cpp
+    ../src/cyccpy.cpp
+)
+
+add_executable(bench_grid
+    bench_grid.cpp
+    bench_functions.cpp
+    ../src/cyccpy.cpp
+)
+
+foreach(target misacpy_bench probe simple_bench bench_grid)
     target_include_directories(${target} PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/../include
@@ -32,6 +44,7 @@ foreach(target misacpy_bench probe)
             -Wall
             -Wextra
             -Wpedantic
+            -std=c++20
         )
 
         if(MISACPY_BENCH_MARCH_NATIVE)
