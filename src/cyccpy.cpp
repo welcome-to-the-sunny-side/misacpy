@@ -1,9 +1,9 @@
 #include "misacpy.h"
 
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
-#include <algorithm>
 #include <immintrin.h>
 
 namespace misacpy
@@ -33,9 +33,11 @@ namespace misacpy
         }
 
         static const size_t TINY = 128;
-        static const size_t BENCH_RB = 512;     // Unconditionally use prefix-building for dis in [32, BENCH_RB]
-        static const size_t NT_STORE_ENABLE = size_t(1) << (5 + 20);    // We start using NT stores when n >= 32 MB
-    }
+        static const size_t BENCH_RB =
+            512; // Unconditionally use prefix-building for dis in [32, BENCH_RB]
+        static const size_t NT_STORE_ENABLE =
+            size_t(1) << (5 + 20); // We start using NT stores when n >= 32 MB
+    } // namespace
 
     // Performs `for(int i = 0; i < n; i ++) src[i + dis] = src[i]` but fast (^_^)
     // Requires positive `dis`
@@ -75,23 +77,20 @@ namespace misacpy
 
             size_t i = 0;
 
-            if(dis >= size_t(32))
+            if (dis >= size_t(32))
             {
                 // Build the prefix
-                for (; i + size_t(31) < n and i + dis < prefix_required;
-                    i += size_t(32))
+                for (; i + size_t(31) < n and i + dis < prefix_required; i += size_t(32))
                 {
                     __m256i reg = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(src + i));
                     _mm256_storeu_si256(reinterpret_cast<__m256i*>(src + (i + dis)), reg);
                 }
-                for (; i + size_t(15) < n and i + dis < prefix_required;
-                    i += size_t(16))
+                for (; i + size_t(15) < n and i + dis < prefix_required; i += size_t(16))
                 {
                     __m128i reg = _mm_loadu_si128(reinterpret_cast<const __m128i*>(src + i));
                     _mm_storeu_si128(reinterpret_cast<__m128i*>(src + (i + dis)), reg);
                 }
-                for (; i + size_t(3) < n and i + dis < prefix_required;
-                    i += size_t(4))
+                for (; i + size_t(3) < n and i + dis < prefix_required; i += size_t(4))
                 {
                     uint32_t reg = loadu4(src + i);
                     storeu4(src + (i + dis), reg);
@@ -105,7 +104,7 @@ namespace misacpy
                 if (dis >= size_t(4))
                 {
                     for (; prefix < prefix_required and i + size_t(3) < n;
-                        prefix += size_t(4), i += size_t(4))
+                         prefix += size_t(4), i += size_t(4))
                     {
                         uint32_t reg = loadu4(src + i);
                         storeu4(src + (i + dis), reg);
@@ -113,13 +112,12 @@ namespace misacpy
                 }
                 for (; prefix < prefix_required and i < n; ++i, ++prefix)
                     src[i + dis] = src[i];
-
             }
 
-            while(uintptr_t(src + (i + dis)) % 32)
+            while (uintptr_t(src + (i + dis)) % 32)
             {
                 src[i + dis] = src[i];
-                ++ i;
+                ++i;
             }
 
             // We now have every required prefix_required byte window in [src, src +
@@ -131,14 +129,17 @@ namespace misacpy
 
             size_t add_64 = (size_t(64) % dis);
 
-            if(n >= NT_STORE_ENABLE)
+            if (n >= NT_STORE_ENABLE)
             {
                 while (i + size_t(63) < n)
                 {
-                    __m256i reg1 = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(src + offset1));
-                    __m256i reg2 = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(src + (dis << 1) + offset2));
+                    __m256i reg1 =
+                        _mm256_loadu_si256(reinterpret_cast<const __m256i*>(src + offset1));
+                    __m256i reg2 = _mm256_loadu_si256(
+                        reinterpret_cast<const __m256i*>(src + (dis << 1) + offset2));
 
-                    // NT stores, switch to this when the data is cold, writes will be streamed directly to DRAM 
+                    // NT stores, switch to this when the data is cold, writes will be streamed
+                    // directly to DRAM
                     _mm256_stream_si256(reinterpret_cast<__m256i*>(src + (i + dis)), reg1);
                     _mm256_stream_si256(reinterpret_cast<__m256i*>(src + (j + dis)), reg2);
 
@@ -158,8 +159,10 @@ namespace misacpy
             {
                 while (i + size_t(63) < n)
                 {
-                    __m256i reg1 = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(src + offset1));
-                    __m256i reg2 = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(src + (dis << 1) + offset2));
+                    __m256i reg1 =
+                        _mm256_loadu_si256(reinterpret_cast<const __m256i*>(src + offset1));
+                    __m256i reg2 = _mm256_loadu_si256(
+                        reinterpret_cast<const __m256i*>(src + (dis << 1) + offset2));
 
                     // Non-NT stores
                     _mm256_storeu_si256(reinterpret_cast<__m256i*>(src + (i + dis)), reg1);
