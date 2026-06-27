@@ -10,6 +10,8 @@ void f(uint8_t* src, size_t dis, size_t n)
 
 My implementation (`misacpy::cyccpy`) outperforms the naive assembly by GCC and Clang (`-O3 -march=native`) at all `dis <= 200`, with diminishing returns for increasing `dis`.
 
+Note: I'm only referring to throughput over decently large `n`, and not latency for smaller `n`.
+
 Most of the performance gains are due to the following reasons:
 
 - At `dis < 32`, both GCC and Clang are not able to vectorize the loop with 256 bit avx registers.
